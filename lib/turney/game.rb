@@ -1,13 +1,15 @@
 
 class Game
-  attr_reader :team1, :team2
-  def initialize(team1, team2)
+  attr_reader :team1, :team2, :name
+  def initialize(name, team1, team2)
+    raise ArgumentError if team1.nil? or team2.nil?
     @team1 = team1
     @team2 = team2
+    @name = name
   end
 
   def non_bye_team
-    @non_bye_team ||= teams.find {|t| ! t.bye?}
+    @non_bye_team ||= teams.find {|t| t && !t.bye? }
   end
 
   def bye_game?
@@ -21,10 +23,7 @@ class Game
   # @return [Team] - the winner of the game
   # randomly select a team to win
   def play
-    #puts "Playing #{team1.name} against #{team2.name}"
     winning_team = pick_winner
-    #puts "#{winning_team.name} got a bye, moves to next bracket" if winning_team.played_bye
-    #puts "#{winning_team.name} won the game, moves to next bracket" unless winning_team.played_bye
     winning_team
   end
 

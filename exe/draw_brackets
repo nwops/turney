@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+require 'turney'
+
+if ARGV.count < 1
+  puts "Please supply the number of teams"
+  puts "Usage: #{__FILE__} <number>"
+  exit 1
+end
+number_of_teams = ARGV.first.to_i
+path = Turney.draw(number_of_teams)
+puts `tree #{path}`

@@ -19,13 +19,38 @@ class Tournament
     @brackets ||= []
   end
 
+  def self.add_bye(teams)
+    # number of games/teams divided by 2 cannot be odd
+    count = teams.count
+    ans = divide(count)
+    if ans.odd? or count.odd?
+      return teams if count == 2
+      teams << Team.new(:bye)
+      add_bye(teams)
+    else
+      teams
+    end
+  end
+
+  # recursively divides by 2 until we get less than 6
+  # @return [Integer]
+  def self.divide(num)
+    ans = num / 2
+    if ans > 5
+      divide(ans)
+    else
+      ans
+    end
+  end
+
   # recursively play until a winner is chosen
   def self.play(teams, brackets = [])
-    teams << Team.new(:bye) if teams.count.odd?
-    t = Tournament.new(brackets.count.next,teams)
+    teams = add_bye(teams) if brackets.count == 0
+    t = Tournament.new(brackets.count.next, teams)
     brackets.push(t)
     winners = t.winners
     if winners.count > 1
+      puts winners.count
       play(winners, brackets)
     else
       # return the winner
@@ -36,9 +61,19 @@ class Tournament
   # randomly select teams to play each other
   def games
     unless @games
-      t_teams = teams.dup
+      t_teams = teams.dup.shuffle!
       game_count = (teams.count / 2) + (teams.count % 2)
-      @games = game_count.times.map { |_team| Game.new(t_teams.shuffle!.pop, t_teams.shuffle!.pop) }
+      @games = (1..game_count).map do |num|
+        team1 = t_teams.shuffle!.pop
+        if team1.bye?
+          team2 = t_teams.find {|t| ! t.bye?}
+          t_teams.delete(team2)
+        else
+          team2 = t_teams.find { |t| t.bye?} || t_teams.pop
+          t_teams.delete(team2)
+        end
+        Game.new("Game#{num}",team1, team2)
+      end
     end
     @games
   end
