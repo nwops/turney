@@ -6,6 +6,7 @@ RSpec.describe Turney do
   end
 
   it "picks a winner" do
-    expect(Turney.start(4).name).to be_a(String)
+    winner, brackets = Turney.start(4)
+    expect(winner.name).to be_a(String)
   end
 end

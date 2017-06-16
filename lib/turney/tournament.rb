@@ -1,29 +1,35 @@
 require 'turney/game'
 require 'turney/team'
-
+require 'json'
 # A Tournament is considered to represent a group of brackets where many winners are then
 # sent to the next tournament until 1 team exists
 class Tournament
   attr_accessor :games, :teams, :winners, :name
 
-  def initialize(name, teams)
+  def initialize(bracket_number, teams)
     @teams = teams
-    @name = name
+    @name = "Bracket #{bracket_number}"
   end
 
   def number_of_games
     games.count
   end
 
+  def self.brackets
+    @brackets ||= []
+  end
+
   # recursively play until a winner is chosen
-  def self.play(teams)
-    t = Tournament.new('bracket0'.next,teams)
+  def self.play(teams, brackets = [])
+    teams << Team.new(:bye) if teams.count.odd?
+    t = Tournament.new(brackets.count.next,teams)
+    brackets.push(t)
     winners = t.winners
     if winners.count > 1
-      play(winners)
+      play(winners, brackets)
     else
       # return the winner
-      winners.first
+      [winners.first, brackets]
     end
   end
 
@@ -31,8 +37,10 @@ class Tournament
   def games
     unless @games
       t_teams = teams.dup
-      @games = t_teams.map { |_team| Game.new(t_teams.shuffle!.pop, t_teams.shuffle!.pop) }
+      game_count = (teams.count / 2) + (teams.count % 2)
+      @games = game_count.times.map { |_team| Game.new(t_teams.shuffle!.pop, t_teams.shuffle!.pop) }
     end
+    @games
   end
 
   # @return [Array[Team]] - a array of the winning teams
@@ -43,8 +51,17 @@ class Tournament
   # given a number create teams based on that number
   # @return [Hash[Teams]]
   def self.seed_teams(number)
-    teams = []
-    teams << Team.new(:bye) unless number % 2 == 0
     (1..number).map { |index| Team.new("team#{index}") }
+  end
+
+  def to_json(pretty = false)
+    [
+        name => {
+            games: games,
+            teams: teams,
+            winners: winners
+        }
+    ].to_json(pretty)
+
   end
 end

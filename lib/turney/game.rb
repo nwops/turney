@@ -21,15 +21,23 @@ class Game
   # @return [Team] - the winner of the game
   # randomly select a team to win
   def play
-    puts "Playing #{team1.name} against #{team2.name}"
+    #puts "Playing #{team1.name} against #{team2.name}"
     winning_team = pick_winner
-    puts "Team #{winning_team.name} won the game"
+    #puts "#{winning_team.name} got a bye, moves to next bracket" if winning_team.played_bye
+    #puts "#{winning_team.name} won the game, moves to next bracket" unless winning_team.played_bye
     winning_team
   end
 
   # @return [Team] - the winner of the game
   def winner
     @winner ||= play
+  end
+
+  def to_json(pretty = false)
+    {
+        teams: teams,
+        bye_game: bye_game?
+    }.to_json(pretty)
   end
 
   private
