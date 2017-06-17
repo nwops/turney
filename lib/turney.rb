@@ -6,11 +6,21 @@ module Turney
 
   # @return [Team] - the winner of the tournament
   def self.start(number_of_teams)
+    raise ArgumentError.new("Not enough teams") if number_of_teams < 1
     teams = Tournament.seed_teams(number_of_teams)
     Tournament.play(teams)
   end
 
+  # @return [Team] - the winner of the tournament
+  def self.output_json(number_of_teams)
+    raise ArgumentError.new("Not enough teams") if number_of_teams < 1
+    teams = Tournament.seed_teams(number_of_teams)
+    winner, brackets = Tournament.play(teams)
+    puts brackets.to_json
+  end
+
   def self.draw(number_of_teams)
+    raise ArgumentError.new("Not enough teams") if number_of_teams < 1
     teams = Tournament.seed_teams(number_of_teams)
     brackets_dir = File.join('tree', 'brackets')
     FileUtils.rm_rf(brackets_dir)

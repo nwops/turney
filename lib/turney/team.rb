@@ -6,6 +6,7 @@ class Team
     @played_bye = false
   end
 
+  # @return [Boolean] true if the team is a bye team that is not a real time
   def bye?
     name == :bye
   end

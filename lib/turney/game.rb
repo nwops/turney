@@ -34,8 +34,12 @@ class Game
 
   def to_json(pretty = false)
     {
-        teams: teams,
-        bye_game: bye_game?
+        name => {
+          team1: team1,
+          team2: team2,
+          winner: winner.name,
+          bye_game: bye_game?
+        }
     }.to_json(pretty)
   end
 

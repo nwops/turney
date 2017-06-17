@@ -1,7 +1,7 @@
 require 'turney/game'
 require 'turney/team'
 require 'json'
-# A Tournament is considered to represent a group of brackets where many winners are then
+# A Tournament is considered to represent brackets where many winners are then
 # sent to the next tournament until 1 team exists
 class Tournament
   attr_accessor :games, :teams, :winners, :name
@@ -19,6 +19,7 @@ class Tournament
     @brackets ||= []
   end
 
+  # @param Array[[Team]]
   def self.add_bye(teams)
     # number of games/teams divided by 2 cannot be odd
     count = teams.count
@@ -50,7 +51,6 @@ class Tournament
     brackets.push(t)
     winners = t.winners
     if winners.count > 1
-      puts winners.count
       play(winners, brackets)
     else
       # return the winner
@@ -90,13 +90,10 @@ class Tournament
   end
 
   def to_json(pretty = false)
-    [
+    {
         name => {
             games: games,
-            teams: teams,
-            winners: winners
         }
-    ].to_json(pretty)
-
+    }.to_json(pretty)
   end
 end
