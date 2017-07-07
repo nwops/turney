@@ -22,7 +22,13 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+`bundle exec exe/turney 10`
+
+`bundle exec exe/draw_brackets 10`
+
+Want json?
+
+`bundle exec exe/turney 10 json | jq`
 
 ## Development
 
