@@ -50,7 +50,7 @@ class Game
       non_bye_team.played_bye = true
       non_bye_team
     else
-      Random.new.rand(1..2) % 2 ? team1 : team2
+      Random.new.rand(1..2).even? ? team1 : team2
     end
   end
 end
